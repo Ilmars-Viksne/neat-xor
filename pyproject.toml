@@ -1,0 +1,19 @@
+[project]
+name = "neat_ml"
+version = "0.1.0"
+description = "A Python implementation of the NEAT algorithm, designed for extensibility."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+dependencies = [
+    "matplotlib"
+]
+
+[project.urls]
+Homepage = "https://github.com/example/neat-ml" # Placeholder URL
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+neat-train = "neat_ml.cli:main"
