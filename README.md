@@ -16,8 +16,8 @@ This project refactors a monolithic NEAT script into a structured, installable P
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
-    cd neat-ml
+    git clone https://github.com/Ilmars-Viksne/neat-xor
+    cd neat-xor
     ```
 
 2.  **Install the package:**

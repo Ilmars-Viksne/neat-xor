@@ -27,6 +27,7 @@ def main():
         # For example:
         # compatibility_threshold=3.5,
         # add_node_prob=0.04,
+        node_activation_options=['relu', 'tanh'],
         random_seed=42,
     )
 
