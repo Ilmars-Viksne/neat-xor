@@ -17,3 +17,5 @@ viz/
 .venv/
 venv/
 env/
+.idx/dev.nix
+.vscode/settings.json
