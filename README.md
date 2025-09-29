@@ -119,3 +119,32 @@ print(f"Prediction: {output}")
 ```
 
 See `examples/run_champion.py` for a working example.
+
+## NEAT Configuration (`NEATConfig`)
+
+The `NEATConfig` dataclass holds all the hyperparameters for the NEAT algorithm. You can instantiate it and pass it to the `run_neat` function to customize the evolutionary process.
+
+| Parameter | Description | Type | Default Value |
+| :--- | :--- | :--- | :--- |
+| **`pop_size`** | The total number of genomes (individuals) in the population for each generation. | `int` | `100` |
+| **`num_inputs`** | The number of input nodes in the neural network. This is typically set by the problem definition. | `int` | `0` |
+| **`num_outputs`** | The number of output nodes in the neural network. This is also set by the problem definition. | `int` | `0` |
+| **`num_hidden`** | The number of hidden nodes in the initial population's genomes. Typically starts at 0. | `int` | `0` |
+| **`compatibility_threshold`** | The distance threshold for speciation. If the compatibility distance between two genomes is below this value, they are considered to be in the same species. | `float` | `3.0` |
+| **`disjoint_coeff`** | The coefficient (c1) for weighting disjoint genes in the compatibility distance formula. Higher values place more importance on topological differences. | `float` | `1.0` |
+| **`weight_coeff`** | The coefficient (c2) for weighting the average difference in connection weights in the compatibility distance formula. | `float` | `0.5` |
+| **`survival_threshold`** | The fraction of the fittest individuals in each species that survive to reproduce for the next generation. For example, 0.2 means the top 20% survive. | `float` | `0.2` |
+| **`crossover_rate`** | The probability that an offspring will be created via crossover (mating) between two parents. The alternative is asexual reproduction (cloning and mutating). | `float` | `0.75` |
+| **`mutation_weight_perturb_prob`** | The probability that an existing connection's weight will be perturbed (jiggled) by a small amount. This is only checked if the weight reset fails. | `float` | `0.9` |
+| **`mutation_weight_sigma`** | The standard deviation of the Gaussian distribution used for perturbing connection weights. A larger value means larger perturbations. | `float` | `0.5` |
+| **`mutation_weight_reset_prob`** | The probability that an existing connection's weight will be completely replaced with a new random value between -1 and 1. | `float` | `0.1` |
+| **`add_connection_prob`** | The probability of adding a new connection between two previously unconnected nodes during mutation. | `float` | `0.05` |
+| **`add_node_prob`** | The probability of adding a new node by splitting an existing connection during mutation. | `float` | `0.03` |
+| **`prune_connection_prob`** | The probability of disabling (pruning) an existing connection gene during mutation. | `float` | `0.02` |
+| **`prune_node_prob`** | The probability of disabling (pruning) a hidden node and all its connections during mutation. | `float` | `0.01` |
+| **`mutate_activation_prob`** | The probability that a hidden node's activation function will be randomly changed to a different one from the `node_activation_options` list. | `float` | `0.03` |
+| **`node_activation_options`** | A list of available activation functions that can be assigned to hidden nodes. | `List[str]` | `['tanh', 'sigmoid', 'relu']` |
+| **`allow_recurrent`** | If `True`, the `add_connection` mutation is allowed to create recurrent connections, which form cycles in the network graph. | `bool` | `False` |
+| **`max_stagnation`** | The number of generations a species can go without any improvement in its best fitness before it is considered stagnant and removed. | `int` | `15` |
+| **`random_seed`** | An optional integer to seed the random number generator, ensuring that evolutionary runs are reproducible. | `Optional[int]` | `7` |
+| **`target_fitness`** | An optional fitness score. If any genome in the population reaches this score, the evolution will terminate successfully. | `Optional[float]`| `None` |

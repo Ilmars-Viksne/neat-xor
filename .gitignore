@@ -12,6 +12,7 @@ dist/
 # Generated files from this project
 artifacts/
 viz/
+darcy_results/
 
 # Environment
 .venv/
