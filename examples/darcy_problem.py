@@ -54,7 +54,7 @@ class DarcyProblem(Problem):
         """Generates a grid of training points."""
         re_log_min, re_log_max = 2.5, 8.0
         eps_min, eps_max = 0.0, 0.005
-        n_re, n_eps = 20, 10
+        n_re, n_eps = 20, 100
 
         re_log_values = np.linspace(re_log_min, re_log_max, n_re)
         eps_values = np.linspace(eps_min, eps_max, n_eps)

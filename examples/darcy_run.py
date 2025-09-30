@@ -28,7 +28,7 @@ def plot_moody_comparison(net, output_dir="darcy_results"):
     for i, epsD in enumerate(eps_over_D_values):
         f_true = f_colebrook(Re_analytical, epsD)
         label_true = "Smooth (True)" if epsD == 0.0 else f"ε/D = {epsD:g} (True)"
-        plt.plot(Re_analytical, f_true, lw=2.0, alpha=0.8, color=colors[i], label=label_true)
+        plt.plot(Re_analytical, f_true, '--', lw=2.0, alpha=0.8, color=colors[i], label=label_true)
 
     # --- Plot NEAT Network Predictions ---
     for i, epsD in enumerate(eps_over_D_values):
@@ -42,7 +42,7 @@ def plot_moody_comparison(net, output_dir="darcy_results"):
             f_predicted.append(output[0])
 
         label_neat = "NEAT" if i == 0 else "_nolegend_" # Show legend only once for NEAT
-        plt.plot(Re_analytical, f_predicted, '--', lw=1.5, color=colors[i], label=label_neat)
+        plt.plot(Re_analytical, f_predicted, lw=1.5, color=colors[i], label=label_neat)
 
     # --- Formatting ---
     plt.xscale('log')
@@ -57,8 +57,8 @@ def plot_moody_comparison(net, output_dir="darcy_results"):
     # Create a clean legend
     from matplotlib.lines import Line2D
     legend_elements = [
-        Line2D([0], [0], color='black', lw=2, label='Analytical (True)'),
-        Line2D([0], [0], color='black', lw=1.5, ls='--', label='NEAT Prediction')
+        Line2D([0], [0], color='black', lw=2, ls='--', label='Analytical (True)'),
+        Line2D([0], [0], color='black', lw=1.5, label='NEAT Prediction')
     ]
     for i, epsD in enumerate(eps_over_D_values):
         label = "Smooth" if epsD == 0.0 else f"ε/D = {epsD:g}"

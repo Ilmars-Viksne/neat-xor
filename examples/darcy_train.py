@@ -15,14 +15,15 @@ def run():
     # 1. Define the NEAT configuration
     # These parameters are based on the NEATConfig dataclass in neat_ml/neat.py
     config = NEATConfig(
-        pop_size=150,
+        pop_size=200,
         max_stagnation=20,
         elitism=2,
-        survival_threshold=0.2,
+        survival_threshold=0.3    ,
         add_node_prob=0.05,
         add_connection_prob=0.08,
+        prune_connection_prob=0.02,
         # The target fitness is high because fitness is 1 / (1 + MSE)
-        target_fitness=0.999,
+        target_fitness=0.9999,
         allow_recurrent=False
     )
 
