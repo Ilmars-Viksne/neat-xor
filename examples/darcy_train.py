@@ -3,6 +3,7 @@ Trains a NEAT network for the Darcy friction factor problem using the neat_ml li
 """
 import os
 import pickle
+import argparse
 
 from neat_ml.neat import NEATConfig, run_neat
 from neat_ml.visualization import plot_history
@@ -12,6 +13,12 @@ def run():
     """
     Sets up the configuration and runs the NEAT algorithm.
     """
+    # 0. Set up argument parser
+    parser = argparse.ArgumentParser(description="Train a NEAT network for the Darcy problem.")
+    parser.add_argument("--start-from", type=str, default=None,
+                        help="Path to a pre-trained champion genome file (.pkl) to start evolution from.")
+    args = parser.parse_args()
+
     # 1. Define the NEAT configuration
     # These parameters are based on the NEATConfig dataclass in neat_ml/neat.py
     config = NEATConfig(
@@ -33,18 +40,30 @@ def run():
     # 3. Define a directory to save results
     output_dir = "darcy_results"
     os.makedirs(output_dir, exist_ok=True)
+    
+    # 4. Load a starting champion if specified
+    starting_champion = None
+    if args.start_from:
+        if os.path.exists(args.start_from):
+            with open(args.start_from, "rb") as f:
+                starting_champion = pickle.load(f)
+            print(f"Starting evolution from champion: {args.start_from}")
+        else:
+            print(f"Warning: Starting champion file not found at {args.start_from}. Starting from scratch.")
 
-    # 4. Run the NEAT algorithm
+
+    # 5. Run the NEAT algorithm
     print("Starting NEAT evolution for the Darcy problem...")
     champion_genome, history = run_neat(
         cfg=config,
         problem=problem,
         max_generations=300,
+        starting_champion=starting_champion,
         viz_dir=output_dir,
         viz_each_gen=False  # Set to True for detailed viz, but can be slow
     )
 
-    # 5. Save the results
+    # 6. Save the results
     # Save the champion genome
     champion_path = os.path.join(output_dir, "darcy-champion.pkl")
     with open(champion_path, "wb") as f:
