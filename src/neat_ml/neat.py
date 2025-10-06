@@ -5,6 +5,7 @@ from collections import deque, defaultdict
 import math
 import random
 import os
+import pickle
 
 from .genome import Genome, NodeGene, ConnectionGene, NodeType
 from .problem import Problem
@@ -456,7 +457,8 @@ def run_neat(
     max_generations: int = 300,
     starting_champion: Optional[Genome] = None,
     viz_dir: Optional[str] = None,
-    viz_each_gen: bool = True
+    viz_each_gen: bool = False,
+    save_each_gen: bool = False
 ) -> Tuple[Genome, EvolutionHistory]:
     cfg.n_inputs, cfg.n_outputs = problem.get_input_output_size()
     if cfg.random_seed is not None:
@@ -519,12 +521,24 @@ def run_neat(
         history.gen_best.append(gen_best.fitness)
         history.avg.append(avg_fit)
         history.species.append(len(species_list))
-        if viz_dir and viz_each_gen:
-            fname = os.path.join(viz_dir, f"gen_{gen:03d}_champion.png")
-            try:
-                visualize_genome(gen_best, fname, title=f"Gen {gen} champion (fit={gen_best.fitness:.3f})")
-            except Exception as e:
-                print(f"[viz] Failed to save {fname}: {e}")
+        if viz_dir:
+            if viz_each_gen:
+                fname = os.path.join(viz_dir, f"gen_{gen:03d}_champion.png")
+                try:
+                    visualize_genome(gen_best, fname, title=f"Gen {gen} champion (fit={gen_best.fitness:.3f})")
+                except Exception as e:
+                    print(f"[viz] Failed to save {fname}: {e}")
+            if save_each_gen:
+                fname = os.path.join(viz_dir, f"gen_{gen:03d}_champion.pkl")
+                try:
+                    # Remove the unpicklable phenotype before saving
+                    gen_best_to_save = gen_best.copy()
+                    gen_best_to_save._phenotype = None
+                    with open(fname, "wb") as f:
+                        pickle.dump(gen_best_to_save, f)
+                except Exception as e:
+                    print(f"[save] Failed to save {fname}: {e}")
+
         stop = False
         if cfg.target_fitness is not None and best_overall.fitness >= cfg.target_fitness:
             print("Early stopping: target fitness reached.")
@@ -546,4 +560,9 @@ def run_neat(
             visualize_genome(best_overall, final_path, title=f"Final champion (fit={best_overall.fitness:.3f})")
         except Exception as e:
             print(f"[viz] Failed to save final visualization: {e}")
+    
+    # Clean the phenotype from the final champion before returning
+    if best_overall:
+        best_overall._phenotype = None
+
     return best_overall, history

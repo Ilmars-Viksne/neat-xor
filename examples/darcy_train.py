@@ -60,10 +60,15 @@ def run():
         max_generations=300,
         starting_champion=starting_champion,
         viz_dir=output_dir,
-        viz_each_gen=False  # Set to True for detailed viz, but can be slow
+        viz_each_gen=False,  # Set to True for detailed viz, but can be slow
+        save_each_gen=True  # Set to True to save the best genome of each generation
     )
 
     # 6. Save the results
+    # Before saving, remove the unpicklable _phenotype attribute
+    if champion_genome:
+        champion_genome._phenotype = None
+        
     # Save the champion genome
     champion_path = os.path.join(output_dir, "darcy-champion.pkl")
     with open(champion_path, "wb") as f:
@@ -82,13 +87,14 @@ def run():
     print(f"Fitness history plot saved to {history_plot_path}")
 
     # Display final stats
-    print("\n--- Evolution Summary ---")
-    print(f"  - Best fitness achieved: {champion_genome.fitness:.6f}")
-    print(f"  - Number of generations: {len(history.generations)}")
-    print(f"  - Champion genome stats:")
-    print(f"    - Nodes: {len(champion_genome.nodes)}")
-    print(f"    - Connections: {len(champion_genome.conns)}")
-    print("-------------------------")
+    if champion_genome:
+        print("\n--- Evolution Summary ---")
+        print(f"  - Best fitness achieved: {champion_genome.fitness:.6f}")
+        print(f"  - Number of generations: {len(history.generations)}")
+        print(f"  - Champion genome stats:")
+        print(f"    - Nodes: {len(champion_genome.nodes)}")
+        print(f"    - Connections: {len(champion_genome.conns)}")
+        print("-------------------------")
 
 
 if __name__ == "__main__":
