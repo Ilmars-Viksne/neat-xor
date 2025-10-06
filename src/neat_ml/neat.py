@@ -454,6 +454,7 @@ def run_neat(
     cfg: NEATConfig,
     problem: Problem,
     max_generations: int = 300,
+    starting_champion: Optional[Genome] = None,
     viz_dir: Optional[str] = None,
     viz_each_gen: bool = True
 ) -> Tuple[Genome, EvolutionHistory]:
@@ -461,7 +462,27 @@ def run_neat(
     if cfg.random_seed is not None:
         random.seed(cfg.random_seed)
     innov_db = InnovationDB()
-    population = initialize_population(cfg, innov_db)
+    if starting_champion:
+        # Update innovation database from the champion genome to avoid collisions
+        max_node_id = 0
+        if starting_champion.nodes:
+            max_node_id = max(starting_champion.nodes.keys())
+        innov_db.next_node_id = max(innov_db.next_node_id, max_node_id + 1)
+
+        max_innov = 0
+        if starting_champion.conns:
+            max_innov = max(starting_champion.conns.keys())
+        innov_db.next_innovation = max(innov_db.next_innovation, max_innov + 1)
+        
+        # Create a population of mutated clones of the champion
+        population = [starting_champion.copy() for _ in range(cfg.pop_size)]
+        population[0].fitness = 0 # Reset fitness
+        for g in population[1:]:
+            g.fitness = 0 # Reset fitness
+            mutate(cfg, innov_db, g)
+    else:
+        population = initialize_population(cfg, innov_db)
+
     species_list: List[Species] = []
     best_overall: Optional[Genome] = None
     history = EvolutionHistory()
